@@ -1,11 +1,12 @@
 package UltraSound_System;
 
 import java.awt.Point;
-import java.util.Map;
+import java.util.HashMap;
 
 public interface UltraSound_IN {
-	public Map<Integer,Point> Obstackles();
+	public HashMap<Integer,Point> getObstackles();
 	public Point GetCarPositionXY();
 	public int GetCarParameter();
 
 }
+	

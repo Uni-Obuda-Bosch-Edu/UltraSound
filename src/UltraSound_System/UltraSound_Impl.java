@@ -1,6 +1,7 @@
 package UltraSound_System;
 
 import java.awt.Point;
+import java.util.HashMap;
 import java.util.Map;
 
 import FrameWork.virtualDataBus.Container;
@@ -51,7 +52,7 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 	}
 
 	@Override
-	public Map<Integer, Point> Obstackles() {
+	public HashMap<Integer, Point> getObstackles() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -69,9 +70,32 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 	}
 
 	@Override
-	public Map<Integer, Integer> getDistanceByObstackles() {
+	public HashMap<Integer, Integer> getDistanceByObstackles() {
 		// TODO Auto-generated method stub
+		// melyik szenzor
+		// akadály
+
 		return null;
+	}
+
+	private HashMap<Integer, Integer> searchingObstackle(Point sensorCoord) {
+
+		HashMap<Integer, Integer> findingsObstackle = new HashMap<Integer, Integer>();
+
+		for (int i = 0; i < getObstackles().size(); i++) {
+			int distanceX = 0;
+			int distanceY = 0;
+			distanceX = Math.abs(sensorCoord.x - getObstackles().get(i).x);
+			distanceY = Math.abs(sensorCoord.y - getObstackles().get(i).y);
+			if(inTheCircle(distanceX, distanceY)){
+				findingsObstackle.put(getObstackles()., value);
+			}
+		}
+		return findingsObstackle;
+
+	}
+	private boolean inTheCircle(int distanceX, int distanceY){
+		return (distanceX<=5 || distanceY<=5);
 	}
 
 }
