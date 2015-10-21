@@ -1,9 +1,10 @@
 package UltraSound_System;
 
 import java.util.HashMap;
+import java.util.Map;
 
 
 public interface UltraSound_Out	 {
-	public HashMap<Integer, Integer> getDistanceByObstackles();
+	public Map<Integer, Double> getDistanceByObstackles();
 }
 	
