@@ -79,38 +79,42 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 		return null;
 	}
 
-	private HashMap<Integer, Integer> searchingObstackle(Point sensorCoord) {
+	
+	private Map<Integer, Integer> searchingObstackle(Point sensorCoord) {
 
-		HashMap<Integer, Integer> findingsObstackle = new HashMap<Integer, Integer>();
+		Map<Integer, Integer> findingsObstackle = new HashMap<Integer, Integer>();
 
-		for (int i = 0; i < getObstackles().size(); i++) {
+		for (Map.Entry<Integer, Point> currObstackle : getObstackles().entrySet()) {
 			int distanceX = 0;
 			int distanceY = 0;
-			distanceX = Math.abs(sensorCoord.x - getObstackles().get(i).x);
-			distanceY = Math.abs(sensorCoord.y - getObstackles().get(i).y);
-			if(inTheCircle(distanceX, distanceY)){
-				if()
-				findingsObstackle.put(getObstackles()., value);
+			distanceX = Math.abs(sensorCoord.x - currObstackle.getValue().x);
+			distanceY = Math.abs(sensorCoord.y - currObstackle.getValue().y);
+			if (inTheCircle(distanceX, distanceY)) {
+				if (true) {// te függvényed
+					findingsObstackle.put(currObstackle.getKey(),calc(currObstackle.getValue())); // calc egy új függvény ami számolja a koordinátát
+				}
 			}
 		}
 		return findingsObstackle;
-
 	}
+
 	private boolean inTheCircle(int distanceX, int distanceY){
 		return (distanceX<=5 && distanceY<=5);
 	}
 
-	private boolean inSectorOfTheCircle(Point sensorMidPoint, int sensorViewDegree, Point obstacklePoint){
+	private boolean inSectorOfTheCircle(Point sensorMidPoint, int sensorViewDegree, Point obstacklePoint, int sensorNumberID){
 	 // 
 		
 		boolean inside =false;
-		int sensorHalfViewDegree = sensorViewDegree/2;
+		double sensorHalfViewDegree = Math.PI/180*sensorViewDegree/2;//radiánba átváltás
+		
 		Point sensorViewMiddelPoint = new Point(0,0);
-		Point BorderPoint = viewDegreeCalibration(sensorMidPoint, 45);
+
+		Point BorderPoint= viewDegreeCalibration(sensorMidPoint, sensorViewDegree, sensorNumberID);
 		
 		//sensor látómezõjének közepén található referencia pont meghatározása
-		sensorViewMiddelPoint.x = (int) ((BorderPoint.getX()-sensorMidPoint.getX())*Math.cos(sensorHalfViewDegree)-(BorderPoint.getY()-sensorMidPoint.getY()*Math.sin(sensorHalfViewDegree))+BorderPoint.getX());
-		sensorViewMiddelPoint.y = (int) ((BorderPoint.getX()-sensorMidPoint.getX())*Math.sin(sensorHalfViewDegree)+(BorderPoint.getY()-sensorMidPoint.getY()*Math.cos(sensorHalfViewDegree))+BorderPoint.getY());
+		sensorViewMiddelPoint.x = (int) ((BorderPoint.getX()-sensorMidPoint.getX())*Math.cos(sensorHalfViewDegree)-(BorderPoint.getY()-sensorMidPoint.getY()*Math.sin(sensorHalfViewDegree))+sensorMidPoint.getX());
+		sensorViewMiddelPoint.y = (int) ((BorderPoint.getX()-sensorMidPoint.getX())*Math.sin(sensorHalfViewDegree)+(BorderPoint.getY()-sensorMidPoint.getY()*Math.cos(sensorHalfViewDegree))+sensorMidPoint.getY());
 		
 		double distanceA = Point2D.distance(sensorMidPoint.getX(), sensorMidPoint.getY(), sensorViewMiddelPoint.getX(), sensorViewMiddelPoint.getY());
 		double distanceB = Point2D.distance(sensorMidPoint.getX(), sensorMidPoint.getY(), obstacklePoint.getX(), obstacklePoint.getY());
@@ -124,11 +128,16 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 	}
 	
 
-	private	Point viewDegreeCalibration(Point sensorMidPoint,int angleOnCar)
+	private	Point viewDegreeCalibration(Point sensorMidPoint,int angleOnCar, int sensorNumberID)
 	{
-		sensorMidPoint.x += 500;
+		Point calibrationPoint = new Point(0,0);
+		double angleOnCarDouble =  Math.PI/180*angleOnCar*sensorNumberID;
+		int offsetXpoint = sensorMidPoint.x-20; //nullát deffeljük majd
 		
-		return sensorMidPoint;
+		calibrationPoint.x = (int) ((offsetXpoint-sensorMidPoint.getX())*Math.cos(angleOnCarDouble)-(0*Math.sin(angleOnCarDouble))+sensorMidPoint.getX());
+		calibrationPoint.y = (int) ((offsetXpoint-sensorMidPoint.getX())*Math.sin(angleOnCarDouble)+(0*Math.cos(angleOnCarDouble))+sensorMidPoint.getY());
+	
+		return calibrationPoint;
 	}
 	
 }
