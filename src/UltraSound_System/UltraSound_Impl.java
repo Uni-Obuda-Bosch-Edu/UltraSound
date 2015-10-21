@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import FrameWork.virtualDataBus.Container;
+import java.awt.geom.Point2D;
 
 public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 
@@ -88,6 +89,7 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 			distanceX = Math.abs(sensorCoord.x - getObstackles().get(i).x);
 			distanceY = Math.abs(sensorCoord.y - getObstackles().get(i).y);
 			if(inTheCircle(distanceX, distanceY)){
+				if()
 				findingsObstackle.put(getObstackles()., value);
 			}
 		}
@@ -95,7 +97,38 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 
 	}
 	private boolean inTheCircle(int distanceX, int distanceY){
-		return (distanceX<=5 || distanceY<=5);
+		return (distanceX<=5 && distanceY<=5);
 	}
 
+	private boolean inSectorOfTheCircle(Point sensorMidPoint, int sensorViewDegree, Point obstacklePoint){
+	 // 
+		
+		boolean inside =false;
+		int sensorHalfViewDegree = sensorViewDegree/2;
+		Point sensorViewMiddelPoint = new Point(0,0);
+		Point BorderPoint = viewDegreeCalibration(sensorMidPoint, 45);
+		
+		//sensor látómezõjének közepén található referencia pont meghatározása
+		sensorViewMiddelPoint.x = (int) ((BorderPoint.getX()-sensorMidPoint.getX())*Math.cos(sensorHalfViewDegree)-(BorderPoint.getY()-sensorMidPoint.getY()*Math.sin(sensorHalfViewDegree))+BorderPoint.getX());
+		sensorViewMiddelPoint.y = (int) ((BorderPoint.getX()-sensorMidPoint.getX())*Math.sin(sensorHalfViewDegree)+(BorderPoint.getY()-sensorMidPoint.getY()*Math.cos(sensorHalfViewDegree))+BorderPoint.getY());
+		
+		double distanceA = Point2D.distance(sensorMidPoint.getX(), sensorMidPoint.getY(), sensorViewMiddelPoint.getX(), sensorViewMiddelPoint.getY());
+		double distanceB = Point2D.distance(sensorMidPoint.getX(), sensorMidPoint.getY(), obstacklePoint.getX(), obstacklePoint.getY());
+		double distanceC = Point2D.distance(sensorViewMiddelPoint.getX(), sensorViewMiddelPoint.getY(), obstacklePoint.getX(), obstacklePoint.getY());
+		
+		//látómezõ közepén elhelyezett refPonthoz 
+		double angleByDistance = Math.acos((Math.pow(distanceA, 2)+Math.pow(distanceB, 2)-Math.pow(distanceC, 2))/(2*distanceA*distanceB));
+		
+		if(sensorHalfViewDegree >= angleByDistance) inside =true;
+		return inside;
+	}
+	
+
+	private	Point viewDegreeCalibration(Point sensorMidPoint,int angleOnCar)
+	{
+		sensorMidPoint.x += 500;
+		
+		return sensorMidPoint;
+	}
+	
 }
