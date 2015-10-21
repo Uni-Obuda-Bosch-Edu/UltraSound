@@ -113,8 +113,8 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 		Point BorderPoint= viewDegreeCalibration(sensorMidPoint, sensorViewDegree, sensorNumberID);
 		
 		//sensor látómezõjének közepén található referencia pont meghatározása
-		sensorViewMiddelPoint.x = (int) ((BorderPoint.getX()-sensorMidPoint.getX())*Math.cos(sensorHalfViewDegree)-(BorderPoint.getY()-sensorMidPoint.getY()*Math.sin(sensorHalfViewDegree))+sensorMidPoint.getX());
-		sensorViewMiddelPoint.y = (int) ((BorderPoint.getX()-sensorMidPoint.getX())*Math.sin(sensorHalfViewDegree)+(BorderPoint.getY()-sensorMidPoint.getY()*Math.cos(sensorHalfViewDegree))+sensorMidPoint.getY());
+		sensorViewMiddelPoint.x = (int) ((BorderPoint.getX()-sensorMidPoint.getX())*Math.cos(sensorHalfViewDegree)-((BorderPoint.getY()-sensorMidPoint.getY())*Math.sin(sensorHalfViewDegree))+sensorMidPoint.getX());
+		sensorViewMiddelPoint.y = (int) ((BorderPoint.getX()-sensorMidPoint.getX())*Math.sin(sensorHalfViewDegree)+((BorderPoint.getY()-sensorMidPoint.getY())*Math.cos(sensorHalfViewDegree))+sensorMidPoint.getY());
 		
 		double distanceA = Point2D.distance(sensorMidPoint.getX(), sensorMidPoint.getY(), sensorViewMiddelPoint.getX(), sensorViewMiddelPoint.getY());
 		double distanceB = Point2D.distance(sensorMidPoint.getX(), sensorMidPoint.getY(), obstacklePoint.getX(), obstacklePoint.getY());
