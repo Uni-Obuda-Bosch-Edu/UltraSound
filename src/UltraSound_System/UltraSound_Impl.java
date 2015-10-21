@@ -11,8 +11,9 @@ import FrameWork.virtualDataBus.Container;
 
 public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 
-	// private int XUltraSoundDistance = 50; // 100*240
-	private int YUltraSoundDistance = 120;
+	// private final int XUltraSoundDistance = 50; // 100*240
+	private final int maxRange =50;
+	private final int YUltraSoundDistance = 120;
 
 	private List<UltraSoundSensor> sensors;
 	Container container;
@@ -44,7 +45,7 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 	}
 
 	@Override
-	public HashMap<Integer, Point> getObstackles() {
+	public Map<Integer, Point> getObstackles() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -80,13 +81,13 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 			distanceX = Math.abs(ultrasoundsensor.getSensorMidPoint().x - currObstackle.getValue().x);
 			distanceY = Math.abs(ultrasoundsensor.getSensorMidPoint().y - currObstackle.getValue().y);
 			if (inTheCircle(distanceX, distanceY)) {
-				if (inSectorOfTheCircle(new Point(100, 100), 90, new Point(120, 90), 2)) {
+				if (inSectorOfTheCircle(ultrasoundsensor.getSensorMidPoint(), ultrasoundsensor.getSensorViewDegree(),
+						currObstackle.getValue(), ultrasoundsensor.getSensorID())) {
 					findingsObstackle.put(currObstackle.getKey(),
 							calcDistance2D(currObstackle.getValue(), GetCarPositionXY()));
 				}
 			}
 		}
-
 		return findingsObstackle;
 	}
 	// a te függvényed random adatokkal if (inSectorOfTheCircle(new Point(100,
