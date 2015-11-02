@@ -1,4 +1,4 @@
-package FrameWork.busInterface;
+package UltraSound.Core.Framework.busInterface;
 
 public interface Gearbox_Out {
 	public void setGearTorque(double gearTorque);

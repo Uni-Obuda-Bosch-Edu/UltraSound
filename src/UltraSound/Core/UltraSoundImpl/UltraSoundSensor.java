@@ -1,4 +1,4 @@
-package UltraSound_System;
+package UltraSound.Core.UltraSoundImpl;
 
 import java.awt.Point;
 enum Direction{

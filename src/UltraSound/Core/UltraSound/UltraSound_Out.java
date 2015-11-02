@@ -1,4 +1,4 @@
-package UltraSound_System;
+package UltraSound.Core.UltraSound;
 
 import java.util.Map;
 

@@ -1,7 +1,6 @@
-package UltraSound_System;
+package UltraSound.Core.UltraSound;
 
 import java.awt.Point;
-import java.util.HashMap;
 import java.util.Map;
 
 public interface UltraSound_IN {

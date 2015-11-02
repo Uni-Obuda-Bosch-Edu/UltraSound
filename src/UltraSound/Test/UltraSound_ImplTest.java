@@ -1,10 +1,12 @@
-package UltraSound_System;
+package UltraSound.Test;
 
 import static org.junit.Assert.*;
 
 import java.awt.Point;
 
 import org.junit.Test;
+
+import UltraSound.Core.UltraSoundImpl.UltraSound_Impl;
 
 public class UltraSound_ImplTest {
 

@@ -1,4 +1,4 @@
-package UltraSound_System;
+package UltraSound.Core.UltraSoundImpl;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
@@ -7,12 +7,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import FrameWork.virtualDataBus.Container;
+import UltraSound.Core.Framework.virtualDataBus.Container;
+import UltraSound.Core.UltraSound.UltraSound_IN;
+import UltraSound.Core.UltraSound.UltraSound_Out;
+
+
 
 public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 
 	// private final int XUltraSoundDistance = 50; // 100*240
-	private final int maxRange =50;
+	private final int maxRange =500;
 	private final int YUltraSoundDistance = 120;
 
 	private List<UltraSoundSensor> sensors;
@@ -98,7 +102,7 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 	}
 
 	public boolean inTheCircle(int distanceX, int distanceY) {
-		return (distanceX <= 500 && distanceY <= 500);
+		return (distanceX <= maxRange && distanceY <= maxRange);
 	}
 
 	public boolean inSectorOfTheCircle(Point sensorMidPoint, int sensorViewDegree, Point obstacklePoint,
