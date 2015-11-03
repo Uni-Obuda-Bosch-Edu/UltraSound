@@ -3,6 +3,10 @@ package UltraSound.Test;
 import static org.junit.Assert.*;
 
 import java.awt.Point;
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -10,23 +14,43 @@ import UltraSound.Core.UltraSoundImpl.UltraSound_Impl;
 
 public class UltraSound_ImplTest {
 
-	//5 méteren belülvan-e test
+	
 	@Test
-	public void testBelül() {
+	public void testCorners(){
+		UltraSound_Impl test = new UltraSound_Impl();
+		Point2D carCenter = new Point2D.Double();
+		
+		carCenter.setLocation(50,120);
+		List<Point2D> corners = new ArrayList<Point2D>();
+		corners = test.getCarObjetCornersPositions(carCenter);
+				
+		assertEquals(0, (int)corners.get(0).getX());
+
+		assertEquals(240, (int)corners.get(0).getY());
+		assertEquals(100, (int)corners.get(1).getX());
+		assertEquals(240, (int)corners.get(1).getY());
+		assertEquals(100, (int)corners.get(2).getX());
+		assertEquals(0, (int)corners.get(2).getY());
+		assertEquals(0, (int)corners.get(3).getX());
+		assertEquals(0, (int)corners.get(3).getY());
+	}
+	//5 mï¿½teren belï¿½lvan-e test
+	@Test
+	public void testBell() {
 		UltraSound_Impl test = new UltraSound_Impl();
 		
 		boolean resoult = test.inTheCircle(400, 400);
 		assertEquals(true, resoult);
 	}
 	@Test
-	public void testKivül() {
+	public void testKivl() {
 		UltraSound_Impl test = new UltraSound_Impl();
 		
 		boolean resoult = test.inTheCircle(600, 400);
 		assertEquals(false, resoult);
 	}
 	
-	//Szenzorokhoz tartozó referencia pont meghatározása (látószögük balszélsõ pontja)
+	//Szenzorokhoz tartozï¿½ referencia pont meghatï¿½rozï¿½sa (lï¿½tï¿½szï¿½gï¿½k balszï¿½lsï¿½ pontja)
 	@Test
 	public void testViewDegreeBackSensor2() {
 		UltraSound_Impl test = new UltraSound_Impl();
@@ -74,11 +98,11 @@ public class UltraSound_ImplTest {
 		assertEquals(new Point(50,100), resoult);
 	}
 	
-	//Szenzor látó mezzõjébe esõ tárgyakat szûrõ metódus tesztjei
+	//Szenzor lï¿½tï¿½ mezzï¿½jï¿½be esï¿½ tï¿½rgyakat szï¿½rï¿½ metï¿½dus tesztjei
 	@Test
 	public void testInSector() {
 		UltraSound_Impl test = new UltraSound_Impl();
-		//Paraméterek SzenzorHelye, látószöge, tereptárgy kordinátája, senzor azonosítója (0 hátsó balszélsõ)
+		//Paramï¿½terek SzenzorHelye, lï¿½tï¿½szï¿½ge, tereptï¿½rgy kordinï¿½tï¿½ja, senzor azonosï¿½tï¿½ja (0 hï¿½tsï¿½ balszï¿½lsï¿½)
 		boolean resoult = test.inSectorOfTheCircle(new Point(100,100), 45, new Point(50,99), 0);
 		assertEquals(true, resoult);
 	}

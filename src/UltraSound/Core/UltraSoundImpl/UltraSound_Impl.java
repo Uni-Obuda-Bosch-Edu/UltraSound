@@ -26,7 +26,26 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 		sensors = new ArrayList<UltraSoundSensor>();
 		sensorCalc();
 	}
+	
+	private class offset{
+		static final int x = 50;
+		static final int y = 120;
+	};
 
+	public List<Point2D> getCarObjetCornersPositions(Point2D carCenter){
+		 List<Point2D> corners = new ArrayList<Point2D>();
+		 Point2D corner = new Point2D.Double();
+		
+		corner = new Point2D.Double(carCenter.getX()-offset.x,carCenter.getY() + offset.y);
+		corners.add(0,  corner);
+		corner = new Point2D.Double(carCenter.getX()+offset.x,carCenter.getY()+offset.y);
+		corners.add(1,  corner);
+		corner = new Point2D.Double(carCenter.getX()+offset.x,carCenter.getY()-offset.y);
+		corners.add(2,  corner);
+		corner = new Point2D.Double(carCenter.getX()-offset.x,carCenter.getY()-offset.y);
+		corners.add(3,  corner);
+		return corners;
+	}
 	private void sensorCalc() {
 		int idGen = 0;
 		Direction directUP = Direction.UP;
@@ -94,7 +113,7 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 		}
 		return findingsObstackle;
 	}
-	// a te függvényed random adatokkal if (inSectorOfTheCircle(new Point(100,
+	// a te fï¿½ggvï¿½nyed random adatokkal if (inSectorOfTheCircle(new Point(100,
 	// 100), 90, new Point(120, 90), 2))
 
 	public double calcDistance2D(Point currObstackle, Point carPosition) {
@@ -108,14 +127,14 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 	public boolean inSectorOfTheCircle(Point sensorMidPoint, int sensorViewDegree, Point obstacklePoint,
 			int sensorNumberID) {
 		boolean inside = false;
-		double sensorHalfViewDegree = Math.PI / 180 * sensorViewDegree / 2;// radiánba
-																			// átváltás
+		double sensorHalfViewDegree = Math.PI / 180 * sensorViewDegree / 2;// radiï¿½nba
+																			// ï¿½tvï¿½ltï¿½s
 
 		Point sensorViewMiddelPoint = new Point(0, 0);
 
 		Point BorderPoint = viewDegreeCalibration(sensorMidPoint, sensorViewDegree, sensorNumberID);
 
-		// sensor látómezõjének közepén található referencia pont meghatározása
+		// sensor lï¿½tï¿½mezï¿½jï¿½nek kï¿½zepï¿½n talï¿½lhatï¿½ referencia pont meghatï¿½rozï¿½sa
 		sensorViewMiddelPoint.x = (int) ((BorderPoint.getX() - sensorMidPoint.getX()) * Math.cos(sensorHalfViewDegree)
 				- ((BorderPoint.getY() - sensorMidPoint.getY()) * Math.sin(sensorHalfViewDegree))
 				+ sensorMidPoint.getX());
@@ -130,7 +149,7 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 		double distanceC = Point2D.distance(sensorViewMiddelPoint.getX(), sensorViewMiddelPoint.getY(),
 				obstacklePoint.getX(), obstacklePoint.getY());
 
-		// látómezõ közepén elhelyezett refPonthoz
+		// lï¿½tï¿½mezï¿½ kï¿½zepï¿½n elhelyezett refPonthoz
 		double angleByDistance = Math.acos((Math.pow(distanceA, 2) + Math.pow(distanceB, 2) - Math.pow(distanceC, 2))
 				/ (2 * distanceA * distanceB));
 
@@ -142,7 +161,7 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 	public Point viewDegreeCalibration(Point sensorMidPoint, int angleOnCar, int sensorNumberID) {
 		Point calibrationPoint = new Point(0, 0);
 		double angleOnCarDouble = Math.PI / 180 * angleOnCar * sensorNumberID;
-		int offsetXpoint = sensorMidPoint.x - 50; // nullát deffeljük majd
+		int offsetXpoint = sensorMidPoint.x - 50; // nullï¿½t deffeljï¿½k majd
 
 		calibrationPoint.x = (int) ((offsetXpoint - sensorMidPoint.getX()) * Math.cos(angleOnCarDouble)
 				- (0 * Math.sin(angleOnCarDouble)) + sensorMidPoint.getX());
