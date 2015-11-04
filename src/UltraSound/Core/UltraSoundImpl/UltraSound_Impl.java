@@ -50,7 +50,7 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 		int idGen = 0;
 		Direction directUP = Direction.UP;
 		Direction directDOWN = Direction.DOWN;
-		int sensorViewDegree = 45;
+		int sensorViewDegree = 90;
 
 		Point pointUpSensor = new Point(GetCarPositionXY().x, GetCarPositionXY().y + YUltraSoundDistance);
 		Point pointDownSensor = new Point(GetCarPositionXY().x, GetCarPositionXY().y - YUltraSoundDistance);
@@ -58,13 +58,13 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 		sensors.add(new UltraSoundSensor(idGen++, pointDownSensor, sensorViewDegree, directDOWN));// 0
 		sensors.add(new UltraSoundSensor(idGen++, pointDownSensor, sensorViewDegree, directDOWN));// 1
 		sensors.add(new UltraSoundSensor(idGen++, pointDownSensor, sensorViewDegree, directDOWN));// 2
-		sensors.add(new UltraSoundSensor(idGen++, pointDownSensor, sensorViewDegree, directDOWN));//
+		sensors.add(new UltraSoundSensor(idGen++, pointDownSensor, sensorViewDegree, directDOWN));// 3
 
 		// Up
+		sensors.add(new UltraSoundSensor(idGen++, pointUpSensor, sensorViewDegree, directUP));// 4
 		sensors.add(new UltraSoundSensor(idGen++, pointUpSensor, sensorViewDegree, directUP));// 5
 		sensors.add(new UltraSoundSensor(idGen++, pointUpSensor, sensorViewDegree, directUP));// 6
 		sensors.add(new UltraSoundSensor(idGen++, pointUpSensor, sensorViewDegree, directUP));// 7
-		sensors.add(new UltraSoundSensor(idGen++, pointUpSensor, sensorViewDegree, directUP));// 8
 	}
 
 	@Override
@@ -113,8 +113,7 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 		}
 		return findingsObstackle;
 	}
-	// a te fï¿½ggvï¿½nyed random adatokkal if (inSectorOfTheCircle(new Point(100,
-	// 100), 90, new Point(120, 90), 2))
+	
 
 	public double calcDistance2D(Point currObstackle, Point carPosition) {
 		return Point2D.distance(currObstackle.getX(), currObstackle.getY(), carPosition.getX(), carPosition.getY());
@@ -124,24 +123,19 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 		return (distanceX <= maxRange && distanceY <= maxRange);
 	}
 
-	public boolean inSectorOfTheCircle(Point sensorMidPoint, int sensorViewDegree, Point obstacklePoint,
+	public boolean inSectorOfTheCircle(Point2D sensorMidPoint, int sensorViewDegree, Point2D obstacklePoint,
 			int sensorNumberID) {
+																		
+		Point2D sensorViewMiddelPoint = new Point2D.Double(0, 0);
+		Point2D BorderPoint  = new Point2D.Double(0, 0);
 		boolean inside = false;
-		double sensorHalfViewDegree = Math.PI / 180 * sensorViewDegree / 2;// radiï¿½nba
-																			// ï¿½tvï¿½ltï¿½s
+		int sensorHalfViewDegree = sensorViewDegree / 2;
+			
+		BorderPoint = viewDegreeCalibration(sensorMidPoint, sensorViewDegree, sensorNumberID);
 
-		Point sensorViewMiddelPoint = new Point(0, 0);
-
-		Point BorderPoint = viewDegreeCalibration(sensorMidPoint, sensorViewDegree, sensorNumberID);
-
-		// sensor lï¿½tï¿½mezï¿½jï¿½nek kï¿½zepï¿½n talï¿½lhatï¿½ referencia pont meghatï¿½rozï¿½sa
-		sensorViewMiddelPoint.x = (int) ((BorderPoint.getX() - sensorMidPoint.getX()) * Math.cos(sensorHalfViewDegree)
-				- ((BorderPoint.getY() - sensorMidPoint.getY()) * Math.sin(sensorHalfViewDegree))
-				+ sensorMidPoint.getX());
-		sensorViewMiddelPoint.y = (int) ((BorderPoint.getX() - sensorMidPoint.getX()) * Math.sin(sensorHalfViewDegree)
-				+ ((BorderPoint.getY() - sensorMidPoint.getY()) * Math.cos(sensorHalfViewDegree))
-				+ sensorMidPoint.getY());
-
+		// sensor latomezojenek kozepenek meghatarozasa		
+		sensorViewMiddelPoint = midPointRotation(sensorMidPoint,BorderPoint, sensorHalfViewDegree);;
+		
 		double distanceA = Point2D.distance(sensorMidPoint.getX(), sensorMidPoint.getY(), sensorViewMiddelPoint.getX(),
 				sensorViewMiddelPoint.getY());
 		double distanceB = Point2D.distance(sensorMidPoint.getX(), sensorMidPoint.getY(), obstacklePoint.getX(),
@@ -149,7 +143,7 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 		double distanceC = Point2D.distance(sensorViewMiddelPoint.getX(), sensorViewMiddelPoint.getY(),
 				obstacklePoint.getX(), obstacklePoint.getY());
 
-		// lï¿½tï¿½mezï¿½ kï¿½zepï¿½n elhelyezett refPonthoz
+		// latomezo kozepenek egyik pontja es targy altal bezart szog nagysága
 		double angleByDistance = Math.acos((Math.pow(distanceA, 2) + Math.pow(distanceB, 2) - Math.pow(distanceC, 2))
 				/ (2 * distanceA * distanceB));
 
@@ -158,17 +152,44 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 		return inside;
 	}
 
-	public Point viewDegreeCalibration(Point sensorMidPoint, int angleOnCar, int sensorNumberID) {
-		Point calibrationPoint = new Point(0, 0);
-		double angleOnCarDouble = Math.PI / 180 * angleOnCar * sensorNumberID;
-		int offsetXpoint = sensorMidPoint.x - 50; // nullï¿½t deffeljï¿½k majd
-
-		calibrationPoint.x = (int) ((offsetXpoint - sensorMidPoint.getX()) * Math.cos(angleOnCarDouble)
-				- (0 * Math.sin(angleOnCarDouble)) + sensorMidPoint.getX());
-		calibrationPoint.y = (int) ((offsetXpoint - sensorMidPoint.getX()) * Math.sin(angleOnCarDouble)
-				+ (0 * Math.cos(angleOnCarDouble)) + sensorMidPoint.getY());
-
-		return calibrationPoint;
+	public Point2D viewDegreeCalibration(Point2D sensorMidPoint, int sensorViewDegree,int sensorNumberID) {
+		Point2D calibrationPoint = new Point2D.Double(0, 0);
+		
+		int oppositeSensorID=((sensorNumberID+4)%sensors.size());
+		
+		//atlosan elhelyezkedo szenzorok kozeppontjat 180fokkal elforgatja adott sensor kozeppontja korul
+		calibrationPoint = midPointRotation(sensorMidPoint,sensors.get(oppositeSensorID).getSensorMidPoint() , 180);
+		
+		// ha 2-vel nem oszthato id-je a sensornak akkor ez a kivánt referenciapont különben elforgatjuk 
+		if(sensorNumberID%2 ==1)	
+			return calibrationPoint;
+		else{
+			calibrationPoint =midPointRotation(sensorMidPoint,calibrationPoint, sensorViewDegree);
+			return calibrationPoint;
+		}
+		
 	}
-
+	
+	
+	//
+	public Point2D midPointRotation(Point2D midpoint,Point2D rotpoint ,int rotdegree) {
+		
+	    Point2D rotatedPoint = new Point2D.Double(0, 0);
+		double rotdegreeInRad = Math.PI / 180 * rotdegree ;			
+		double x = 0;
+		double y = 0;
+		
+		x= ((rotpoint.getX() - midpoint.getX()) * Math.cos(rotdegreeInRad)
+				- ((rotpoint.getY() - midpoint.getY()) * Math.sin(rotdegreeInRad))
+				+ midpoint.getX());
+				
+		y= ((rotpoint.getX() - midpoint.getX()) * Math.sin(rotdegreeInRad)
+				+ ((rotpoint.getY() - midpoint.getY()) * Math.cos(rotdegreeInRad))
+				+ midpoint.getY());;
+	
+	    rotatedPoint.setLocation(x, y);
+	    	    
+	    return rotatedPoint;
+	}
 }
+
