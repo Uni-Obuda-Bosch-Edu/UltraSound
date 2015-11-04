@@ -51,6 +51,8 @@ public class UltraSound_ImplTest {
 	}
 	
 	//Szenzorokhoz tartoz� referencia pont meghat�roz�sa (l�t�sz�g�k balsz�ls� pontja)
+/*	
+	
 	@Test
 	public void testViewDegreeBackSensor2() {
 		UltraSound_Impl test = new UltraSound_Impl();
@@ -122,6 +124,6 @@ public class UltraSound_ImplTest {
 		boolean resoult = test.inSectorOfTheCircle(new Point(100,100), 45, new Point(101,101), 0);
 		assertEquals(false, resoult);
 	}
-	
+	*/
 	
 }
