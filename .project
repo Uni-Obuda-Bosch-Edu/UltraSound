@@ -3,6 +3,7 @@
 	<name>UltraSound</name>
 	<comment></comment>
 	<projects>
+		<project>World</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

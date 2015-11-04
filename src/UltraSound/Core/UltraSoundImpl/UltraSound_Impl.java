@@ -7,16 +7,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import Interfaces.I2DPoint;
+import Interfaces.IWorldObject;
+import Interfaces.WorldObjectTypes;
 import UltraSound.Core.Framework.virtualDataBus.Container;
 import UltraSound.Core.UltraSound.UltraSound_IN;
 import UltraSound.Core.UltraSound.UltraSound_Out;
 
-
-
 public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 
 	// private final int XUltraSoundDistance = 50; // 100*240
-	private final int maxRange =500;
+	private final int maxRange = 500;
 	private final int YUltraSoundDistance = 120;
 
 	private List<UltraSoundSensor> sensors;
@@ -26,26 +27,27 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 		sensors = new ArrayList<UltraSoundSensor>();
 		sensorCalc();
 	}
-	
-	private class offset{
+
+	private class offset {
 		static final int x = 50;
 		static final int y = 120;
 	};
 
-	public List<Point2D> getCarObjetCornersPositions(Point2D carCenter){
-		 List<Point2D> corners = new ArrayList<Point2D>();
-		 Point2D corner = new Point2D.Double();
-		
-		corner = new Point2D.Double(carCenter.getX()-offset.x,carCenter.getY() + offset.y);
-		corners.add(0,  corner);
-		corner = new Point2D.Double(carCenter.getX()+offset.x,carCenter.getY()+offset.y);
-		corners.add(1,  corner);
-		corner = new Point2D.Double(carCenter.getX()+offset.x,carCenter.getY()-offset.y);
-		corners.add(2,  corner);
-		corner = new Point2D.Double(carCenter.getX()-offset.x,carCenter.getY()-offset.y);
-		corners.add(3,  corner);
+	public List<Point2D> getCarObjetCornersPositions(Point2D carCenter) {
+		List<Point2D> corners = new ArrayList<Point2D>();
+		Point2D corner = new Point2D.Double();
+
+		corner = new Point2D.Double(carCenter.getX() - offset.x, carCenter.getY() + offset.y);
+		corners.add(0, corner);
+		corner = new Point2D.Double(carCenter.getX() + offset.x, carCenter.getY() + offset.y);
+		corners.add(1, corner);
+		corner = new Point2D.Double(carCenter.getX() + offset.x, carCenter.getY() - offset.y);
+		corners.add(2, corner);
+		corner = new Point2D.Double(carCenter.getX() - offset.x, carCenter.getY() - offset.y);
+		corners.add(3, corner);
 		return corners;
 	}
+
 	private void sensorCalc() {
 		int idGen = 0;
 		Direction directUP = Direction.UP;
@@ -68,7 +70,7 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 	}
 
 	@Override
-	public Map<Integer, Point> getObstackles() {
+	public List<IWorldObject> getObstackles() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -98,50 +100,70 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 
 		Map<Integer, Double> findingsObstackle = new HashMap<Integer, Double>();
 
-		for (Map.Entry<Integer, Point> currObstackle : getObstackles().entrySet()) {
-			int distanceX = 0;
-			int distanceY = 0;
-			distanceX = Math.abs(ultrasoundsensor.getSensorMidPoint().x - currObstackle.getValue().x);
-			distanceY = Math.abs(ultrasoundsensor.getSensorMidPoint().y - currObstackle.getValue().y);
-			if (inTheCircle(distanceX, distanceY)) {
-				if (inSectorOfTheCircle(ultrasoundsensor.getSensorMidPoint(), ultrasoundsensor.getSensorViewDegree(),
-						currObstackle.getValue(), ultrasoundsensor.getSensorID())) {
-					findingsObstackle.put(currObstackle.getKey(),
-							calcDistance2D(currObstackle.getValue(), GetCarPositionXY()));
+		for (IWorldObject currObstackle : getObstackles()) {
+			double distanceX = 0;
+			double distanceY = 0;
+			distanceX = Math.abs(ultrasoundsensor.getSensorMidPoint().x - currObstackle.getPosition().getX());
+			distanceY = Math.abs(ultrasoundsensor.getSensorMidPoint().y - currObstackle.getPosition().getY());
+
+			if (currObstackle.getCar() == WorldObjectTypes.CarObject.Car) {
+				int fourCornernear = 0;
+				for (Point2D currCorner : getCarObjetCornersPositions(currObstackle.getPosition())) {
+					/*
+					 * if (inTheCircle(currCorner.getX(), currCorner.getY())) {
+					 * if
+					 * (inSectorOfTheCircle(ultrasoundsensor.getSensorMidPoint()
+					 * , ultrasoundsensor.getSensorViewDegree(), currCorner,
+					 * ultrasoundsensor.getSensorID())) {
+					 * findingsObstackle.put(currObstackle.getID(),
+					 * calcDistance2D(currObstackle.getPosition(),
+					 * GetCarPositionXY())); 					 *
+					 * } }					 *
+					 */
+				}
+
+			} else {
+				if (inTheCircle(distanceX, distanceY)) {
+					if (inSectorOfTheCircle(ultrasoundsensor.getSensorMidPoint(),
+							ultrasoundsensor.getSensorViewDegree(), currObstackle.getPosition(),
+							ultrasoundsensor.getSensorID())) {
+						findingsObstackle.put(currObstackle.getID(),
+								calcDistance2D(currObstackle.getPosition(), GetCarPositionXY()));
+					}
 				}
 			}
 		}
 		return findingsObstackle;
 	}
-	
 
-	public double calcDistance2D(Point currObstackle, Point carPosition) {
-		return Point2D.distance(currObstackle.getX(), currObstackle.getY(), carPosition.getX(), carPosition.getY());
+	public double calcDistance2D(Point2D point2d, Point carPosition) {
+		return Point2D.distance(point2d.getX(), point2d.getY(), carPosition.getX(), carPosition.getY());
 	}
 
-	public boolean inTheCircle(int distanceX, int distanceY) {
+	public boolean inTheCircle(double distanceX, double distanceY) {
 		return (distanceX <= maxRange && distanceY <= maxRange);
 	}
 
-	public boolean inSectorOfTheCircle(Point2D sensorMidPoint, int sensorViewDegree, Point2D obstacklePoint,
+	public boolean inSectorOfTheCircle(Point2D sensorMidPoint, int sensorViewDegree, Point2D point2d,
 			int sensorNumberID) {
-																		
+
 		Point2D sensorViewMiddelPoint = new Point2D.Double(0, 0);
-		Point2D BorderPoint  = new Point2D.Double(0, 0);
+		Point2D BorderPoint = new Point2D.Double(0, 0);
 		boolean inside = false;
 		int sensorHalfViewDegree = sensorViewDegree / 2;
-			
+
 		BorderPoint = viewDegreeCalibration(sensorMidPoint, sensorViewDegree, sensorNumberID);
 
-		// sensor latomezojenek kozepenek meghatarozasa		
-		sensorViewMiddelPoint = midPointRotation(sensorMidPoint,BorderPoint, sensorHalfViewDegree);;
-		
+		// sensor latomezojenek kozepenek meghatarozasa
+		sensorViewMiddelPoint = midPointRotation(sensorMidPoint, BorderPoint, sensorHalfViewDegree);
+		;
+
 		double distanceA = Point2D.distance(sensorMidPoint.getX(), sensorMidPoint.getY(), sensorViewMiddelPoint.getX(),
 				sensorViewMiddelPoint.getY());
-		double distanceB = Point2D.distance(sensorMidPoint.getX(), sensorMidPoint.getY(), obstacklePoint.getX(),
-				obstacklePoint.getY());
-		double distanceC = Point2D.distance(sensorViewMiddelPoint.getX(), sensorViewMiddelPoint.getY(),
-				obstacklePoint.getX(), obstacklePoint.getY());
+		double distanceB = Point2D.distance(sensorMidPoint.getX(), sensorMidPoint.getY(), point2d.getX(),
+				point2d.getY());
+		double distanceC = Point2D.distance(sensorViewMiddelPoint.getX(), sensorViewMiddelPoint.getY(), point2d.getX(),
+				point2d.getY());
 
 		// latomezo kozepenek egyik pontja es targy altal bezart szog nagysága
 		double angleByDistance = Math.acos((Math.pow(distanceA, 2) + Math.pow(distanceB, 2) - Math.pow(distanceC, 2))
@@ -152,44 +174,43 @@ public class UltraSound_Impl implements UltraSound_Out, UltraSound_IN {
 		return inside;
 	}
 
-	public Point2D viewDegreeCalibration(Point2D sensorMidPoint, int sensorViewDegree,int sensorNumberID) {
+	public Point2D viewDegreeCalibration(Point2D sensorMidPoint, int sensorViewDegree, int sensorNumberID) {
 		Point2D calibrationPoint = new Point2D.Double(0, 0);
-		
-		int oppositeSensorID=((sensorNumberID+4)%sensors.size());
-		
-		//atlosan elhelyezkedo szenzorok kozeppontjat 180fokkal elforgatja adott sensor kozeppontja korul
-		calibrationPoint = midPointRotation(sensorMidPoint,sensors.get(oppositeSensorID).getSensorMidPoint() , 180);
-		
-		// ha 2-vel nem oszthato id-je a sensornak akkor ez a kivánt referenciapont különben elforgatjuk 
-		if(sensorNumberID%2 ==1)	
+
+		int oppositeSensorID = ((sensorNumberID + 4) % sensors.size());
+
+		// atlosan elhelyezkedo szenzorok kozeppontjat 180fokkal elforgatja
+		// adott sensor kozeppontja korul
+		calibrationPoint = midPointRotation(sensorMidPoint, sensors.get(oppositeSensorID).getSensorMidPoint(), 180);
+
+		// ha 2-vel nem oszthato id-je a sensornak akkor ez a kivánt
+		// referenciapont különben elforgatjuk
+		if (sensorNumberID % 2 == 1)
 			return calibrationPoint;
-		else{
-			calibrationPoint =midPointRotation(sensorMidPoint,calibrationPoint, sensorViewDegree);
+		else {
+			calibrationPoint = midPointRotation(sensorMidPoint, calibrationPoint, sensorViewDegree);
 			return calibrationPoint;
 		}
-		
+
 	}
-	
-	
+
 	//
-	public Point2D midPointRotation(Point2D midpoint,Point2D rotpoint ,int rotdegree) {
-		
-	    Point2D rotatedPoint = new Point2D.Double(0, 0);
-		double rotdegreeInRad = Math.PI / 180 * rotdegree ;			
+	public Point2D midPointRotation(Point2D midpoint, Point2D rotpoint, int rotdegree) {
+
+		Point2D rotatedPoint = new Point2D.Double(0, 0);
+		double rotdegreeInRad = Math.PI / 180 * rotdegree;
 		double x = 0;
 		double y = 0;
-		
-		x= ((rotpoint.getX() - midpoint.getX()) * Math.cos(rotdegreeInRad)
-				- ((rotpoint.getY() - midpoint.getY()) * Math.sin(rotdegreeInRad))
-				+ midpoint.getX());
-				
-		y= ((rotpoint.getX() - midpoint.getX()) * Math.sin(rotdegreeInRad)
-				+ ((rotpoint.getY() - midpoint.getY()) * Math.cos(rotdegreeInRad))
-				+ midpoint.getY());;
-	
-	    rotatedPoint.setLocation(x, y);
-	    	    
-	    return rotatedPoint;
+
+		x = ((rotpoint.getX() - midpoint.getX()) * Math.cos(rotdegreeInRad)
+				- ((rotpoint.getY() - midpoint.getY()) * Math.sin(rotdegreeInRad)) + midpoint.getX());
+
+		y = ((rotpoint.getX() - midpoint.getX()) * Math.sin(rotdegreeInRad)
+				+ ((rotpoint.getY() - midpoint.getY()) * Math.cos(rotdegreeInRad)) + midpoint.getY());
+		;
+
+		rotatedPoint.setLocation(x, y);
+
+		return rotatedPoint;
 	}
 }
-
