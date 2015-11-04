@@ -1,6 +1,6 @@
 package UltraSound.Core.UltraSoundImpl;
 
-import java.awt.Point;
+import java.awt.geom.Point2D;
 enum Direction{
 	UP, DOWN
 	}
@@ -8,7 +8,7 @@ enum Direction{
 public class UltraSoundSensor {
 
 	private Integer sensorID;
-	private Point sensorMidPoint;
+	private Point2D sensorMidPoint;
 	private Integer sensorViewDegree;
 	Direction sensorDirection;
 	public Direction getSensorDirection() {
@@ -19,10 +19,10 @@ public class UltraSoundSensor {
 		return sensorID;
 	}
 
-	public Point getSensorMidPoint() {
+	public Point2D getSensorMidPoint() {
 		return sensorMidPoint;
 	}
-	public void setSensorMidPoint(Point sensorMidPoint) {
+	public void setSensorMidPoint(Point2D sensorMidPoint) {
 		this.sensorMidPoint = sensorMidPoint;
 	}
 	public Integer getSensorViewDegree() {
@@ -32,7 +32,7 @@ public class UltraSoundSensor {
 		this.sensorViewDegree = sensorViewDegree;
 	}
 
-	public UltraSoundSensor(Integer sensorID, Point sensorMidPoint, Integer sensorViewDegree,
+	public UltraSoundSensor(Integer sensorID, Point2D sensorMidPoint, Integer sensorViewDegree,
 			Direction sensorDirection) {
 		this.sensorID = sensorID;
 		this.sensorMidPoint = sensorMidPoint;
